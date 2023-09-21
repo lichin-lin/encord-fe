@@ -38,11 +38,15 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Todo
 - Tab component
-    - images and predictions section
+    - ✅ images and predictions section
 - 2 Layout section
-    - for images and predictions
+    - ✅ for images and predictions
 - List layout component for images
-    - Table-like UI
-    - with name, size, timestamp, button
+    - ✅ Table-like UI
+    - ✅ with name, size, timestamp, button
 - Modal component
-- SVG
+    - ✅ Image tab: Form with 2 input
+    - Image tab: use JSON server
+    - Image tab: error toast when API return failed result
+    - Prediction tab: show image
+    - Prediction tab: show annotation
