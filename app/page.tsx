@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface imageProps {
@@ -53,10 +53,10 @@ interface predictionBoxProps {
 }
 
 interface bboxProps {
-  x1: string;
-  x2: string;
-  y1: string;
-  y2: string;
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
 }
 interface formProps {
   title: string;
@@ -88,6 +88,7 @@ export default function Home() {
     }
   };
   const onAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    {/* Future Todo: clean up add image handler, so it can be more easily to read, and maintain */}
     if (e.target.files && e.target.files.length) {
       const len = e.target.files.length;
       const list: imageProps[] = [];
@@ -124,6 +125,8 @@ export default function Home() {
           <TabsTrigger value="images">Images</TabsTrigger>
           <TabsTrigger value="predictions">Predictions</TabsTrigger>
         </TabsList>
+
+        {/* First Tab */}
         <TabsContent className="p-2" value="images">
           {/* Action: upload button */}
           <div className="w-full flex space-between">
@@ -189,12 +192,13 @@ export default function Home() {
                     Enter the information, and start your new task.
                   </DialogDescription>
                 </DialogHeader>
+                {/* Future Todo: add form validation so that we can inform warning / error message to the user */}
                 <form
                   onSubmit={async (event) => {
                     // instead of using JSON-SERVER, let's use
                     // Next.js server API for the mock data
                     fetch(`/api/predict`)
-                    // fetch(`${JSONSERVER_ENDPOINT}/predict`)
+                      // fetch(`${JSONSERVER_ENDPOINT}/predict`)
                       .then((res) => res.json())
                       .then((data) => {
                         const date = new Date().getTime();
@@ -279,6 +283,8 @@ export default function Home() {
             </Dialog>
           </div>
         </TabsContent>
+
+        {/* Second Tab */}
         <TabsContent className="p-2" value="predictions">
           {" "}
           <div className="content">
@@ -357,16 +363,10 @@ const PredictionDialog = ({
       const _bbox: renderBboxProps[] = currentPrediction?.annotationData.map(
         (annotation) => {
           return {
-            w:
-              (parseFloat(annotation.bbox.x2) -
-                parseFloat(annotation.bbox.x1)) *
-              ratio,
-            h:
-              (parseFloat(annotation.bbox.y2) -
-                parseFloat(annotation.bbox.y1)) *
-              ratio,
-            t: parseFloat(annotation.bbox.y1) * ratio,
-            l: parseFloat(annotation.bbox.x1) * ratio,
+            w: (annotation.bbox.x2 - annotation.bbox.x1) * ratio,
+            h: (annotation.bbox.y2 - annotation.bbox.y1) * ratio,
+            t: annotation.bbox.y1 * ratio,
+            l: annotation.bbox.x1 * ratio,
             label: `${annotation.label} (${Math.round(
               parseFloat(annotation.score) * 100
             )}%)`,
