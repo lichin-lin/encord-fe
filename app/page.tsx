@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import React, { useState } from "react";
+import { readFileAsDataURL, createImageFromDataURL } from "@/lib/imageUpload";
 import { useToast } from "@/components/ui/use-toast";
 
 interface imageProps {
@@ -63,9 +64,7 @@ interface formProps {
   description: string;
 }
 
-const wait = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 const JSONSERVER_ENDPOINT = "http://localhost:3001";
-
 export default function Home() {
   const [formInputs, setFormInputs] = useState<formProps>();
   const [imageList, setImageList] = useState<imageProps[]>([]);
@@ -88,33 +87,27 @@ export default function Home() {
     }
   };
   const onAddImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    {/* Future Todo: clean up add image handler, so it can be more easily to read, and maintain */}
     if (e.target.files && e.target.files.length) {
-      const len = e.target.files.length;
-      const list: imageProps[] = [];
-      for (let i = 0; i < len; i++) {
-        const file = e.target.files[i];
-        const reader = new FileReader();
-        reader.addEventListener("load", (e) => {
-          let image = new Image();
-          image.src = reader.result as string;
+      const newImages: imageProps[] = [];
 
-          image.onload = function () {
-            const newData: imageProps = {
-              timestamp: `${file?.lastModified}`,
-              fileName: file.name,
-              size: file.size,
-              data: reader.result,
-              width: image.width,
-              height: image.height,
-            };
-            list.push(newData);
-          };
-        });
-        reader.readAsDataURL(file);
+      for (let i = 0; i < e.target.files.length; i++) {
+        const file = e.target.files[i];
+        const imageDataURL = await readFileAsDataURL(file);
+
+        const image = await createImageFromDataURL(imageDataURL);
+        const newData: imageProps = {
+          timestamp: `${file.lastModified}`,
+          fileName: file.name,
+          size: file.size,
+          data: imageDataURL,
+          width: image.width,
+          height: image.height,
+        };
+
+        newImages.push(newData);
       }
-      await wait(1000);
-      setImageList([...imageList, ...list]);
+
+      setImageList([...imageList, ...newImages]);
     }
   };
 
