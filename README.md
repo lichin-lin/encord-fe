@@ -35,18 +35,24 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-
 ## Todo
+
 - Tab component
-    - ✅ images and predictions section
+  - ✅ images and predictions section
 - 2 Layout section
-    - ✅ for images and predictions
+  - ✅ for images and predictions
 - List layout component for images
-    - ✅ Table-like UI
-    - ✅ with name, size, timestamp, button
+  - ✅ Table-like UI
+  - ✅ with name, size, timestamp, button
 - Modal component
-    - ✅ Image tab: Form with 2 input
-    - Image tab: use JSON server
-    - Image tab: error toast when API return failed result
-    - Prediction tab: show image
-    - Prediction tab: show annotation
+  - ✅ Image tab: Form with 2 input
+  - ✅ Image tab: use JSON server
+  - ✅ Image tab: error toast when API return failed result
+  - ✅ Prediction tab: show image
+  - Prediction tab: show annotation
+
+## Future Todo
+
+- FE: form validation
+- FE: split the components into different files
+- BE: backend prediction API

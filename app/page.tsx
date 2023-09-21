@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import React, { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface imageProps {
   fileName: string;
@@ -35,7 +36,8 @@ interface predictionProps {
   title: string;
   description: string;
   timestamp: string;
-  data: string | ArrayBuffer | null;
+  ImageData: string | ArrayBuffer | null;
+  annotationData: object;
 }
 
 interface formProps {
@@ -44,14 +46,17 @@ interface formProps {
 }
 
 const wait = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
+const SERVER_ENDPOINT = "http://localhost:3001";
 
 export default function Home() {
   const [imageList, setImageList] = useState<imageProps[]>([]);
-  const [currentImageId, setCurrentImageId] = useState(-1);
   const [formInputs, setFormInputs] = useState<formProps>();
   const [predictionList, setPredictionList] = useState<predictionProps[]>([]);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const [imageDialogOpen, setImageDialogOpen] = React.useState(false);
   const [predictionDialogOpen, setPredictionDialogOpen] = React.useState(false);
+
+  const [currentImageId, setCurrentImageId] = useState(-1);
   const [currentPrediction, setCurrentPrediction] =
     React.useState<predictionProps>();
   // Images
@@ -84,6 +89,8 @@ export default function Home() {
       setImageList([...imageList, ...list]);
     }
   };
+  const { toast } = useToast();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-4">
       <Tabs defaultValue="images" className="w-full">
@@ -136,7 +143,7 @@ export default function Home() {
                         <Button
                           onClick={() => {
                             setCurrentImageId(index);
-                            setDialogOpen(true);
+                            setImageDialogOpen(true);
                           }}
                         >
                           Predict
@@ -148,7 +155,7 @@ export default function Home() {
               </Table>
             )}
             {/* Dialog */}
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>Start a New Prediction</DialogTitle>
@@ -157,21 +164,38 @@ export default function Home() {
                   </DialogDescription>
                 </DialogHeader>
                 <form
-                  onSubmit={(event) => {
-                    wait().then(() => {
-                      // submit
-                      const date = new Date().getTime();
-                      setPredictionList([
-                        ...predictionList,
-                        {
-                          title: formInputs?.title,
-                          description: formInputs?.description,
-                          data: imageList[currentImageId].data,
-                          timestamp: `${date}`,
-                        },
-                      ]);
-                      setDialogOpen(false);
-                    });
+                  onSubmit={async (event) => {
+                    // future todo: make this a POST, and send the image data to server to process!
+                    fetch(`${SERVER_ENDPOINT}/predict`)
+                      .then((res) => res.json())
+                      .then((data) => {
+                        const date = new Date().getTime();
+                        setPredictionList([
+                          ...predictionList,
+                          {
+                            title: formInputs?.title,
+                            description: formInputs?.description,
+                            ImageData: imageList[currentImageId].data,
+                            annotationData: data,
+                            timestamp: `${date}`,
+                          },
+                        ]);
+                        toast({
+                          title: "Prediction done!",
+                          description:
+                            "Go to prediction page and check the result 🎉",
+                        });
+                      })
+                      .catch((err) => {
+                        // Todo: show error toast
+                        toast({
+                          title: "Ooops! something went wrong.",
+                          description: "Please try again or contact our team",
+                        });
+                      })
+                      .finally(() => {
+                        setImageDialogOpen(false);
+                      });
                     event.preventDefault();
                   }}
                 >
@@ -182,7 +206,7 @@ export default function Home() {
                       </Label>
                       <Input
                         id="title"
-                        defaultValue="new prediction"
+                        defaultValue=""
                         className="col-span-3"
                         onChange={(e) => {
                           setFormInputs({
@@ -198,7 +222,7 @@ export default function Home() {
                       </Label>
                       <Input
                         id="description"
-                        defaultValue="description"
+                        defaultValue=""
                         className="col-span-3"
                         onChange={(e) => {
                           setFormInputs({
@@ -211,7 +235,7 @@ export default function Home() {
                   </div>
                   <DialogFooter>
                     <Button
-                      onClick={() => setDialogOpen(false)}
+                      onClick={() => setImageDialogOpen(false)}
                       variant={"outline"}
                     >
                       Cancel
@@ -272,7 +296,7 @@ export default function Home() {
                   <DialogTitle>Prediction Result</DialogTitle>
                 </DialogHeader>
                 <div className="p-2">
-                  <img src={`${currentPrediction?.data}`}></img>
+                  <img src={`${currentPrediction?.ImageData}`}></img>
                 </div>
               </DialogContent>
             </Dialog>
