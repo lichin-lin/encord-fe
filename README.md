@@ -1,3 +1,30 @@
+Simple annotation application (only the frontend part) Demo site bulit with - Next.js, Typescript, Tailwind and radix-ui.
+## Todo
+
+- Tab component
+  - ✅ images and predictions section
+- 2 Layout section
+  - ✅ for images and predictions
+- List layout component for images
+  - ✅ Table-like UI
+  - ✅ with name, size, timestamp, button
+- Modal component
+  - ✅ Image tab: Form with 2 input
+  - ✅ Image tab: use JSON server
+  - ✅ Image tab: error toast when API return failed result
+  - ✅ Prediction tab: show image
+  - ✅ Prediction tab: show annotation
+- Deployment
+  - ✅ Vercel
+  - ✅ Next.js Server API
+## Future Todo
+
+- FE: form validation
+- FE: split the components into different files
+- BE: backend prediction API
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -35,24 +62,4 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-## Todo
 
-- Tab component
-  - ✅ images and predictions section
-- 2 Layout section
-  - ✅ for images and predictions
-- List layout component for images
-  - ✅ Table-like UI
-  - ✅ with name, size, timestamp, button
-- Modal component
-  - ✅ Image tab: Form with 2 input
-  - ✅ Image tab: use JSON server
-  - ✅ Image tab: error toast when API return failed result
-  - ✅ Prediction tab: show image
-  - Prediction tab: show annotation
-
-## Future Todo
-
-- FE: form validation
-- FE: split the components into different files
-- BE: backend prediction API
